@@ -1,0 +1,25 @@
+# Python 缓存
+__pycache__/
+*.py[cod]
+*$py.class
+
+# 编译缓存与结果
+build/
+dist/
+*.build/
+*.onefile-build/
+*.bin
+*.so
+*.pyd
+
+# 项目临时文件
+.idea/
+.vscode/
+.venv/
+venv/
+
+# Docker 构建缓存
+.dockerignore
+
+# 数据文件 (如果你不想开源实测的大型 CSV)
+# *.csv
