@@ -1,50 +1,23 @@
 # ==========================================
-# 阶段一：Nuitka 编译环境
+# 直接使用运行环境，解决 GLIBC 版本不匹配问题
 # ==========================================
-FROM python:3.10-slim AS builder
+# 使用 python:3.10-slim 镜像，它包含了较新的 GLIBC 库
+FROM python:3.10-slim
 
 WORKDIR /app
 
-# 安装必要的编译工具
-RUN apt-get update && apt-get install -y \
-    gcc g++ binutils patchelf ccache zlib1g-dev \
-    && rm -rf /var/lib/apt/lists/*
+# 1. 拷贝已经编译好的二进制文件
+# 此时 Docker 会把当前目录下的 he_pda_engine 放入容器
+COPY he_pda_engine .
 
-# 先安装基础环境工具
-RUN pip install --no-cache-dir setuptools ordered-set zstandard
+# 2. 拷贝静态资源文件夹（Dash 平台运行必需）
+COPY assets ./assets
 
-# 复制依赖并安装
-COPY requirements.txt .
-RUN pip install --no-cache-dir -r requirements.txt
-RUN pip install --no-cache-dir nuitka
-
-# 复制源代码
-COPY . .
-
-# 执行编译
-# 移除了所有无效的 --plugin-enable 指令（Nuitka 不再将 dash/pandas 作为独立插件名）
-# 使用 --include-package-data 确保静态资源被打包
-RUN python -m nuitka \
-    --standalone \
-    --onefile \
-    --follow-imports \
-    --include-package-data=dash \
-    --include-package-data=dash_bootstrap_components \
-    --include-package-data=plotly \
-    --include-package-data=pandas \
-    --include-data-dir=assets=assets \
-    --output-dir=dist \
-    --output-filename=he_pda_engine \
-    --show-progress \
-    --show-memory \
-    diagnosis.py
-
-# ==========================================
-# 阶段二：部署环境 (体积最小化)
-# ==========================================
-FROM debian:bullseye-slim
-WORKDIR /app
-COPY --from=builder /app/dist/he_pda_engine .
-EXPOSE 8052
+# 3. 赋予执行权限
 RUN chmod +x he_pda_engine
+
+# 4. 暴露你的看板端口
+EXPOSE 8052
+
+# 5. 启动程序
 CMD ["./he_pda_engine"]
