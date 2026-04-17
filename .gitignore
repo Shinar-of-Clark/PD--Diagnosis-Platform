@@ -23,3 +23,6 @@ venv/
 
 # 数据文件 (如果你不想开源实测的大型 CSV)
 # *.csv
+*.csv
+# release
+.release/*

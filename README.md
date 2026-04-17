@@ -35,26 +35,38 @@ The platform includes built-in high-frequency samples for immediate testing. For
 - 🔗 [Kaggle Official Dataset (VSB Power Line Fault Detection)](https://www.kaggle.com/competitions/vsb-power-line-fault-detection/data)
 - 🔗 [Author's Google Drive Backup](https://drive.google.com/drive/folders/1GH7KxsQyumzmdKEg-hwQZOdgAETmBsQ5?usp=sharing)
 
+##  Update History
+
+### v1.0.0
+- **🚀 PDA Diagnosis Engine - Version 1.0.0**: First stable release of the Partial Discharge Diagnosis Engine (PDA).
+- **Standalone Binary**: Fully self-contained execution; no Python environment or library installation is required on the host system. Built using Nuitka.
+- **Advanced Signal Processing**: Integrated with optimized scipy and numpy stacks for high-frequency partial discharge (PD) signal analysis and filtering.
+- **Interactive Visualization**: Built with Dash and Plotly to provide a real-time, responsive diagnostic dashboard.
+- **Production Ready**: Specifically tuned for 1GB RAM Ubuntu 22.04 VPS environments with a focus on memory stability.
+- **Documentation Update**: Updated the Quick Start guide to reflect the new standalone binary release deployment process.
+
 ## 🚀 Quick Start
 
-### Option 1: Docker (Recommended)
+### 🛠 Deployment Instructions (Ubuntu 22.04+)
 
-```bash
-# Build image
-docker build -t he-pda-app .
+1. Download the `he_pda_engine` from the Release Assets section.
+2. Grant execution permissions:
+   ```bash
+   chmod +x he_pda_engine
+   ```
+3. Run the engine:
+   - For direct testing:
+     ```bash
+     ./he_pda_engine
+     ```
+   - For background production (recommended):
+     ```bash
+     nohup ./he_pda_engine > app.log 2>&1 &
+     ```
 
-# Run container (Host port 8052 -> Container port 8000)
-docker run -d -p 8052:8000 he-pda-app
-```
-Open: `http://localhost:8052`
-
-### Option 2: Local Python Environment
-
-```bash
-# Install dependencies
-pip install -r requirements.txt
-
-# Start service
-python diagnosis.py
-```
-Open: `http://localhost:8052`
+**📝 Notes:**
+- The default service port is **8052**. Please ensure this port is open in your VPS firewall/security group settings.
+- If you encounter a `libglib` error on a fresh Ubuntu install, run: 
+  ```bash
+  sudo apt update && sudo apt install -y libglib2.0-0
+  ```
