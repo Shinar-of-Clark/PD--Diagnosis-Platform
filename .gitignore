@@ -25,4 +25,5 @@ venv/
 # *.csv
 *.csv
 # release
-.release/*
+release/
+.release/
